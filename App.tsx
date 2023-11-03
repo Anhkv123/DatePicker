@@ -6,14 +6,13 @@
  */
 
 import React from 'react';
-import {Text, View} from 'react-native';
-import Home from './src/screen/Home';
+import {View} from 'react-native';
+import DatePicker from "./src/screen/DatePicker";
 
-const daySeries = [];
 function App(): JSX.Element {
   return (
     <View style={{backgroundColor: '#fff'}}>
-      <Home />
+      <DatePicker />
     </View>
   );
 }
