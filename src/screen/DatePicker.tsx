@@ -23,37 +23,13 @@ const DatePicker: FC<PropsWithChildren<Props>> = () => {
   }
 
   const toggleModal = () => {
-    if(day || month || year){
-      setValue(day + '/' + month + '/' + year)
-    }else{
-      const defaultDate = currentDay + '/' + currentMonth + '/' + currentYear
-      setValue(defaultDate)
-    }
-
-    if(day && !month && !year) {
-      const defaultDate = day + '/' + currentMonth + '/' + currentYear
-      setValue(defaultDate)
-    }
-    if(!day && month && !year) {
-      const defaultDate = currentDay + '/' + month + '/' + currentYear
-      setValue(defaultDate)
-    }
-    if(!day && !month && year) {
-      const defaultDate = currentDay + '/' + currentMonth + '/' + year
-      setValue(defaultDate)
-    }
-    if (day && month && !year) {
-      const defaultDate = day + '/' + month + '/' + currentYear
-      setValue(defaultDate)
-    }
-    if (day && !month && year) {
-      const defaultDate = day + '/' + currentMonth + '/' + year
-      setValue(defaultDate)
-    }
-    if (!day && month && year) {
-      const defaultDate = currentDay + '/' + month + '/' + year
-      setValue(defaultDate)
-    }
+    const date =
+      (day ?? currentDay) +
+      '/' +
+      (month ?? currentMonth) +
+      '/' +
+      (year ?? currentYear);
+    setValue(date);
     setModalVisible(!isModalVisible);
   };
 
