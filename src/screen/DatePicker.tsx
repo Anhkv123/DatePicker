@@ -1,27 +1,39 @@
-import React, { FC, PropsWithChildren, useEffect, useState } from "react";
+import React, {FC, PropsWithChildren, useEffect, useState} from 'react';
 import ScrollPicker from '../component/ScrollPicker';
-import { View, Modal, TouchableOpacity, Text, StyleSheet, TextInput } from "react-native";
+import {
+  View,
+  Modal,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  TextInput,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 type Props = {};
 
 const DatePicker: FC<PropsWithChildren<Props>> = () => {
-
   const [isModalVisible, setModalVisible] = useState(false);
-  const [day, setDay] = useState<number>()
-  const [month, setMonth] = useState<number>()
-  const [year, setYear] = useState<number>()
-  const [value, setValue] = useState<any>('')
-  const [isLeapYear, setIsLeapYear] = useState<number>(31)
-  const [daySeries, setDaySeries] = useState<number[]>([])
-  const [monthSeries, setMonthSeries] = useState<number[]>([])
-  const [yearSeries, setYearSeries] = useState<number[]>([])
+  const [day, setDay] = useState<number>();
+  const [month, setMonth] = useState<number>();
+  const [year, setYear] = useState<number>();
+  const [value, setValue] = useState<any>('');
+  const [isLeapYear, setIsLeapYear] = useState<number>(31);
+  const [daySeries, setDaySeries] = useState<number[]>([]);
+
+  const currentDay = new Date().getDate();
+  const currentMonth = new Date().getMonth() + 1;
+  const currentYear = new Date().getFullYear();
+  const monthSeries = Array.from({length: 12}).map((_, i) => i + 1);
+  const yearSeries = Array.from({length: 2050 - 1950 + 1}, (_, i) => 1950 + i);
 
   useEffect(() => {
-    setDaySeries(Array.from({length: isLeapYear}).map((_, i) => i + 1))
-    setMonthSeries(Array.from({length: 12}).map((_, i) => i + 1))
-    setYearSeries(Array.from({ length: 2100 - 1900 + 1 }, (_, i) => 1900 + i))
-  }, [])
+    setDaySeries(Array.from({length: isLeapYear}).map((_, i) => i + 1));
+
+    if (!!day && day > isLeapYear) {
+      setDay(isLeapYear);
+    }
+  }, [isLeapYear, day]);
 
   const toggleModal = () => {
     const date =
@@ -34,43 +46,58 @@ const DatePicker: FC<PropsWithChildren<Props>> = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const currentDay = new Date().getDate();
-  const currentMonth = new Date().getMonth() + 1;
-  const currentYear = new Date().getFullYear();
-
   useEffect(() => {
-    if(currentYear % 4 === 0 && currentYear % 100 !== 0 || currentYear % 400 === 0) {
-      if(currentMonth === 2){
-        setIsLeapYear(29)
-      }else{
-        if (currentMonth === 4 || currentMonth === 6 || currentMonth === 9 || currentMonth === 11) {
-          setIsLeapYear(30)
+    const tempYear = year ?? currentYear;
+    const tempMonth = month ?? currentMonth;
+
+    if ((tempYear % 4 === 0 && tempYear % 100 !== 0) || tempYear % 400 === 0) {
+      if (tempMonth === 2) {
+        setIsLeapYear(29);
+      } else {
+        if (
+          tempMonth === 4 ||
+          tempMonth === 6 ||
+          tempMonth === 9 ||
+          tempMonth === 11
+        ) {
+          setIsLeapYear(30);
         } else {
-          setIsLeapYear(31)
+          setIsLeapYear(31);
         }
       }
-    }else{
-      if(currentMonth === 2){
-        setIsLeapYear(28)
-      }else{
-        if (currentMonth === 4 || currentMonth === 6 || currentMonth === 9 || currentMonth === 11) {
-          setIsLeapYear(30)
+    } else {
+      if (tempMonth === 2) {
+        setIsLeapYear(28);
+      } else {
+        if (
+          tempMonth === 4 ||
+          tempMonth === 6 ||
+          tempMonth === 9 ||
+          tempMonth === 11
+        ) {
+          setIsLeapYear(30);
         } else {
-          setIsLeapYear(31)
+          setIsLeapYear(31);
         }
       }
     }
-  }, [])
+  }, [currentMonth, currentYear, month, year]);
 
   const checkMonth = () => {
     if (month === 4 || month === 6 || month === 9 || month === 11) {
-      setIsLeapYear(30)
+      setIsLeapYear(30);
     } else {
-      setIsLeapYear(31)
+      setIsLeapYear(31);
     }
-  }
+  };
   return (
-    <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 100}}>
+    <View
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 100,
+      }}>
       <TouchableOpacity onPress={toggleModal} style={styles.button}>
         <TextInput
           autoComplete={'birthdate-full'}
@@ -89,14 +116,21 @@ const DatePicker: FC<PropsWithChildren<Props>> = () => {
         transparent={true}
         animationType="slide"
         visible={isModalVisible}
-        onRequestClose={toggleModal}
-      >
+        onRequestClose={toggleModal}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={{fontWeight: 'bold'}}>Date of birth</Text>
             <View
-              style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: '6%',
-                borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#eaeaea', paddingTop: 40}}>
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: '6%',
+                borderTopWidth: 1,
+                borderBottomWidth: 1,
+                borderColor: '#eaeaea',
+                paddingTop: 40,
+              }}>
               <View
                 style={{
                   backgroundColor: '#fff',
@@ -106,9 +140,7 @@ const DatePicker: FC<PropsWithChildren<Props>> = () => {
                 <ScrollPicker
                   dataSource={daySeries}
                   selectedValue={day ? day : currentDay}
-                  onValueChange={(day) =>
-                    setDay(day)
-                  }
+                  onValueChange={day => setDay(day)}
                   wrapperHeight={200}
                   wrapperBackground="#fff"
                   itemHeight={20}
@@ -125,21 +157,24 @@ const DatePicker: FC<PropsWithChildren<Props>> = () => {
                 <ScrollPicker
                   dataSource={monthSeries}
                   selectedValue={month ? month : currentMonth}
-                  onValueChange={(month) =>{
-                    if(currentYear % 4 === 0 && currentYear % 100 !== 0 || currentYear % 400 === 0) {
-                      if(month === 2){
-                        setIsLeapYear(29)
-                      }else{
-                        checkMonth()
+                  onValueChange={month => {
+                    if (
+                      (currentYear % 4 === 0 && currentYear % 100 !== 0) ||
+                      currentYear % 400 === 0
+                    ) {
+                      if (month === 2) {
+                        setIsLeapYear(29);
+                      } else {
+                        checkMonth();
                       }
-                    }else{
-                      if(month === 2){
-                        setIsLeapYear(28)
-                      }else{
-                        checkMonth()
+                    } else {
+                      if (month === 2) {
+                        setIsLeapYear(28);
+                      } else {
+                        checkMonth();
                       }
                     }
-                    setMonth(month)
+                    setMonth(month);
                   }}
                   wrapperHeight={200}
                   wrapperBackground="#fff"
@@ -157,23 +192,25 @@ const DatePicker: FC<PropsWithChildren<Props>> = () => {
                 <ScrollPicker
                   dataSource={yearSeries}
                   selectedValue={year ? year : currentYear}
-                  onValueChange={(year) => {
-                    if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
-                      if(month === 2){
-                        setIsLeapYear(29)
-                      }else{
-                        checkMonth()
+                  onValueChange={year => {
+                    if (
+                      (year % 4 === 0 && year % 100 !== 0) ||
+                      year % 400 === 0
+                    ) {
+                      if (month === 2) {
+                        setIsLeapYear(29);
+                      } else {
+                        checkMonth();
                       }
-
                     } else {
-                      if(month === 2){
-                        setIsLeapYear(28)
-                      }else{
-                        checkMonth()
+                      if (month === 2) {
+                        setIsLeapYear(28);
+                      } else {
+                        checkMonth();
                       }
                     }
 
-                    setYear(year)
+                    setYear(year);
                   }}
                   wrapperHeight={200}
                   wrapperBackground="#fff"
@@ -206,14 +243,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   modalContent: {
     backgroundColor: 'white',
     padding: 10,
     borderRadius: 10,
     alignItems: 'center',
-    height: '50%'
+    height: '50%',
   },
   modalContainer: {
     flex: 1,
@@ -233,4 +270,4 @@ const styles = StyleSheet.create({
     height: 40,
     paddingHorizontal: 5,
   },
-})
+});

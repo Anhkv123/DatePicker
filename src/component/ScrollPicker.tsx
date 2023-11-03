@@ -80,6 +80,12 @@ const ScrollPicker: {
     },
   }));
 
+  useEffect(() => {
+    if (props.selectedValue && props.selectedValue !== selectedValue) {
+      setSelectedValue(props.selectedValue);
+    }
+  }, [props.selectedValue, selectedValue]);
+
   const wrapperHeight =
     props.wrapperHeight ||
     (isViewStyle(style) && isNumeric(style.height)
@@ -93,7 +99,9 @@ const ScrollPicker: {
       setInitialized(true);
 
       setTimeout(() => {
-        const index = props.dataSource.findIndex(item => item === selectedValue)
+        const index = props.dataSource.findIndex(
+          item => item === selectedValue,
+        );
         const y = itemHeight * index;
         sView?.current?.scrollTo({y: y});
       }, 0);
@@ -102,7 +110,7 @@ const ScrollPicker: {
         timer && clearTimeout(timer);
       };
     },
-    [initialized, itemHeight, selectedValue, sView, timer],
+    [initialized, itemHeight, selectedValue, sView, timer, props.dataSource],
   );
 
   const renderPlaceHolder = () => {
@@ -113,7 +121,9 @@ const ScrollPicker: {
   };
 
   const renderItem = (data: (typeof props.dataSource)[0], index: number) => {
-    const selectIndex = props.dataSource.findIndex(item => item === selectedValue)
+    const selectIndex = props.dataSource.findIndex(
+      item => item === selectedValue,
+    );
     const isSelected = index === selectIndex;
     const item = props.renderItem ? (
       props.renderItem(data, index, isSelected)
@@ -122,10 +132,10 @@ const ScrollPicker: {
         style={
           isSelected
             ? [
-                props.activeItemTextStyle
-                  ? props.activeItemTextStyle
-                  : styles.activeItemTextStyle,
-              ]
+              props.activeItemTextStyle
+                ? props.activeItemTextStyle
+                : styles.activeItemTextStyle,
+            ]
             : [props.itemTextStyle ? props.itemTextStyle : styles.itemTextStyle]
         }>
         {data}
@@ -146,7 +156,9 @@ const ScrollPicker: {
         y = e.nativeEvent.contentOffset.y;
       }
       const _selectedIndex = Math.round(y / h);
-      const selectIndex = props.dataSource.findIndex(item => item === selectedValue)
+      const selectIndex = props.dataSource.findIndex(
+        item => item === selectedValue,
+      );
 
       const _y = _selectedIndex * h;
       if (_y !== y) {
@@ -226,7 +238,7 @@ const ScrollPicker: {
     borderBottomColor: highlightColor,
     borderTopWidth: highlightBorderWidth,
     borderBottomWidth: highlightBorderWidth,
-    marginLeft: 30
+    marginLeft: 30,
   };
 
   const CustomScrollViewComponent = scrollViewComponent || ScrollView;
@@ -267,6 +279,6 @@ const styles = StyleSheet.create({
   },
   activeItemTextStyle: {
     color: '#333',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
 });
