@@ -12,15 +12,16 @@ const DatePicker: FC<PropsWithChildren<Props>> = () => {
   const [month, setMonth] = useState<number>()
   const [year, setYear] = useState<number>()
   const [value, setValue] = useState<any>('')
-  const [isLeapYear, setIsLeapYear] = useState<number>(30)
+  const [isLeapYear, setIsLeapYear] = useState<number>(31)
+  const [daySeries, setDaySeries] = useState<number[]>([])
+  const [monthSeries, setMonthSeries] = useState<number[]>([])
+  const [yearSeries, setYearSeries] = useState<number[]>([])
 
-  const daySeries = Array.from({length: isLeapYear}).map((_, i) => i + 1);
-  const monthSeries = Array.from({length: 12}).map((_, i) => i + 1);
-  const yearSeries: number[] = [];
-
-  for (let i = 1500; i <= 2500; i++) {
-    yearSeries.push(i);
-  }
+  useEffect(() => {
+    setDaySeries(Array.from({length: isLeapYear}).map((_, i) => i + 1))
+    setMonthSeries(Array.from({length: 12}).map((_, i) => i + 1))
+    setYearSeries(Array.from({ length: 2100 - 1900 + 1 }, (_, i) => 1900 + i))
+  }, [])
 
   const toggleModal = () => {
     const date =
@@ -43,9 +44,9 @@ const DatePicker: FC<PropsWithChildren<Props>> = () => {
         setIsLeapYear(29)
       }else{
         if (currentMonth === 4 || currentMonth === 6 || currentMonth === 9 || currentMonth === 11) {
-          setIsLeapYear(30) // Tháng có 30 ngày
+          setIsLeapYear(30)
         } else {
-          setIsLeapYear(31) // Tháng không có 30 ngày
+          setIsLeapYear(31)
         }
       }
     }else{
@@ -53,20 +54,19 @@ const DatePicker: FC<PropsWithChildren<Props>> = () => {
         setIsLeapYear(28)
       }else{
         if (currentMonth === 4 || currentMonth === 6 || currentMonth === 9 || currentMonth === 11) {
-          setIsLeapYear(30) // Tháng có 30 ngày
+          setIsLeapYear(30)
         } else {
-          setIsLeapYear(31) // Tháng không có 30 ngày
+          setIsLeapYear(31)
         }
       }
-      //khong phai nam nhuan
     }
   }, [])
 
   const checkMonth = () => {
     if (month === 4 || month === 6 || month === 9 || month === 11) {
-      setIsLeapYear(30) // Tháng có 30 ngày
+      setIsLeapYear(30)
     } else {
-      setIsLeapYear(31) // Tháng không có 30 ngày
+      setIsLeapYear(31)
     }
   }
   return (
@@ -128,13 +128,13 @@ const DatePicker: FC<PropsWithChildren<Props>> = () => {
                   onValueChange={(month) =>{
                     if(currentYear % 4 === 0 && currentYear % 100 !== 0 || currentYear % 400 === 0) {
                       if(month === 2){
-                        setIsLeapYear(29) // Năm nhuận
+                        setIsLeapYear(29)
                       }else{
                         checkMonth()
                       }
                     }else{
                       if(month === 2){
-                        setIsLeapYear(28) // Năm không nhuận
+                        setIsLeapYear(28)
                       }else{
                         checkMonth()
                       }
@@ -160,14 +160,14 @@ const DatePicker: FC<PropsWithChildren<Props>> = () => {
                   onValueChange={(year) => {
                     if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
                       if(month === 2){
-                        setIsLeapYear(29) // Năm nhuận
+                        setIsLeapYear(29)
                       }else{
                         checkMonth()
                       }
 
                     } else {
                       if(month === 2){
-                        setIsLeapYear(28) // Năm không nhuận
+                        setIsLeapYear(28)
                       }else{
                         checkMonth()
                       }
